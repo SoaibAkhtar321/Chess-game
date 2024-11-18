@@ -1,0 +1,134 @@
+import java.io.*;
+import java.net.*;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
+// ChessServer class for managing server-side operations
+public class ChessServer {
+    private static final int PORT = 12345;
+
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Chess Server is running...");
+            while (true) {
+                new ClientHandler(serverSocket.accept()).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class ClientHandler extends Thread {
+        private Socket socket;
+        private PrintWriter out;
+
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+        }
+
+        public void run() {
+            try {
+                out = new PrintWriter(socket.getOutputStream(), true);
+                // Handle incoming moves and broadcast to other players
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// ChessGUI class for managing the user interface
+public class ChessGUI extends Application {
+    private ChessGame game;
+
+    @Override
+    public void start(Stage primaryStage) {
+        game = new ChessGame();
+        GridPane grid = new GridPane();
+        // Create GUI components for the chessboard
+
+        Scene scene = new Scene(grid, 600, 600);
+        primaryStage.setTitle("Chess Game");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+
+// Player class for managing player-related information
+public class Player {
+    private String name;
+
+    public Player(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    // Additional player-related methods
+}
+
+// Board class for managing the chessboard state
+public class Board {
+    private Piece[][] pieces;
+
+    public Board() {
+        pieces = new Piece[8][8];
+        initializeBoard();
+    }
+
+    private void initializeBoard() {
+        // Initialize pieces on the board
+    }
+
+    public boolean isValidMove(Player player, String move) {
+        // Validate the move based on the current board state and player
+        return true; // Placeholder
+    }
+
+    public void movePiece(Player player, String move) {
+        // Move the piece on the board
+    }
+
+    // Additional methods for board state management
+}
+
+// ChessGame class for managing the game logic
+public class ChessGame {
+    private Board board;
+    private Player whitePlayer;
+    private Player blackPlayer;
+    private Player currentPlayer;
+
+    public ChessGame() {
+        board = new Board();
+        whitePlayer = new Player("White");
+        blackPlayer = new Player("Black");
+        currentPlayer = whitePlayer; // White starts first
+    }
+
+    public void makeMove(String move) {
+        // Parse the move and update the board
+        if (board.isValidMove(currentPlayer, move)) {
+            board.movePiece(currentPlayer, move);
+            switchPlayer();
+        } else {
+            System.out.println("Invalid move. Try again.");
+        }
+    }
+
+    private void switchPlayer() {
+        currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer : whitePlayer;
+    }
+
+    // Additional methods for game state, check/checkmate, etc.
+}
+
+// Note: Ensure all placeholder methods and classes like 'Piece' are implemented.
